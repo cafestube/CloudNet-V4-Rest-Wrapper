@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "eu.cafstube.cloudnet"
+group = "eu.cafestube.cloudnet"
 version = "1.0-SNAPSHOT"
 
 repositories {
