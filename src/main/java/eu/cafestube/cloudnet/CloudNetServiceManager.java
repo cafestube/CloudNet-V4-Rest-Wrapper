@@ -3,6 +3,7 @@ package eu.cafestube.cloudnet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import eu.cafestube.cloudnet.exception.TaskNotFoundException;
+import eu.cafestube.cloudnet.service.LifecycleUpdate;
 import eu.cafestube.cloudnet.service.ServiceConfiguration;
 import eu.cafestube.cloudnet.service.result.ServiceCreateResult;
 import eu.cafestube.cloudnet.task.ServiceTask;
@@ -10,7 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class CloudNetServiceManager {
@@ -68,6 +71,12 @@ public class CloudNetServiceManager {
         }
 
         return gson.fromJson(data.get("result"), ServiceCreateResult.class);
+    }
+
+    public void updateServiceState(LifecycleUpdate state, UUID serviceId) {
+        client.newCloudNetCall("service/" + serviceId + "/lifecycle?target=" + state.name().toLowerCase(Locale.ROOT), builder -> {
+            builder.method("PATCH", HttpRequest.BodyPublishers.noBody());
+        }, HttpResponse.BodyHandlers.discarding());
     }
 
 }

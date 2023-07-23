@@ -39,7 +39,9 @@ public class CloudNetApiClient {
                 .connectTimeout(Duration.ofSeconds(30))
                 .build();
 
-        this.cloudNetToken = login();
+        try {
+            this.cloudNetToken = login();
+        } catch (Exception ignored) {} //We care about these errors when we make the requests
     }
 
     private String login() {
@@ -57,7 +59,7 @@ public class CloudNetApiClient {
 
             return response.body().get("token").getAsString();
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to login", e);
         }
     }
 
