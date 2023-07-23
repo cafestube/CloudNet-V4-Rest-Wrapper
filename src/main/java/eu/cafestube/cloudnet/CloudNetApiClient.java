@@ -38,10 +38,6 @@ public class CloudNetApiClient {
         this.cloudNetClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .build();
-
-        try {
-            this.cloudNetToken = login();
-        } catch (Exception ignored) {} //We care about these errors when we make the requests
     }
 
     private String login() {
@@ -72,6 +68,9 @@ public class CloudNetApiClient {
     }
 
     private  <T> HttpResponse<T> newCloudNetCall(String path, Consumer<HttpRequest.Builder> consumer, HttpResponse.BodyHandler<T> bodyHandler, boolean isRetry) {
+        if (this.cloudNetToken == null) {
+            this.cloudNetToken = login();
+        }
         try {
             HttpRequest.Builder request = HttpRequest.newBuilder()
                     .uri(URI.create(this.host + "/api/v2/" + path))
