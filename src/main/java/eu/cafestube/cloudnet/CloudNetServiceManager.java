@@ -6,6 +6,7 @@ import eu.cafestube.cloudnet.exception.TaskNotFoundException;
 import eu.cafestube.cloudnet.service.LifecycleUpdate;
 import eu.cafestube.cloudnet.service.ServiceConfiguration;
 import eu.cafestube.cloudnet.service.result.ServiceCreateResult;
+import eu.cafestube.cloudnet.service.status.ServiceInfoSnapshot;
 import eu.cafestube.cloudnet.task.ServiceTask;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +72,22 @@ public class CloudNetServiceManager {
         }
 
         return gson.fromJson(data.get("result"), ServiceCreateResult.class);
+    }
+
+    public @Nullable ServiceInfoSnapshot getServiceById(String id) {
+        HttpResponse<Optional<JsonObject>> response = client.newCloudNetCall("service/" + id, builder -> {},
+                CloudNetApiClient.optionalJsonBodyHandler());
+
+        if(response.statusCode() != 200)
+            throw new RuntimeException("Failed to query service");
+
+        JsonObject data = response.body().orElse(null);
+
+        if (data == null || !data.has("success") || !data.get("success").getAsBoolean()) {
+            return null;
+        }
+
+        return gson.fromJson(data.get("snapshot"), ServiceInfoSnapshot.class);
     }
 
     public void updateServiceState(LifecycleUpdate state, UUID serviceId) {
