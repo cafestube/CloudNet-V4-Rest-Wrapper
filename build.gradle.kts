@@ -16,7 +16,7 @@ dependencies {
 
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.google.guava:guava:32.1.1-jre")
+    implementation("com.google.guava:guava:32.1.3-jre")
 
 }
 
